@@ -1,23 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import './App.css'
+import useInterval from './useInterval'
+import Child from './child'
 
 function App() {
   const [count, setCount] = useState(0)
   const [delay, setDelay] = useState(1000)
-  console.log('rerendering')
-
-  useEffect(() => {
-    console.log('setting interval with delay', delay)
-    const interval = setInterval(() => {
-      setCount(count + 1)
-    }, delay)
-    return () => {
-      clearInterval(interval)
-    }
-    
-  }, [delay])
 
 
+  const callback = useCallback(() => {
+    setCount(count => count + 1)
+  }, [])
+
+  const interval = useInterval(callback, delay)
 
   return (
     <>
@@ -35,6 +30,7 @@ function App() {
         />
         {delay} ms
       </label>
+      <Child interval={interval} counter={count} />
     </div>
     </>
   )
